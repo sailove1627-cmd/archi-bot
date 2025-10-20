@@ -72,7 +72,7 @@ def extract_pdf_text(file_path):
 try:
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
     model = genai.GenerativeModel(
-        model_name='models/gemini-pro-latest',
+        model_name='models/gemini-flash-latest',
         system_instruction=system_prompt
     )
 except Exception as e:
@@ -111,6 +111,7 @@ if prompt := st.chat_input("아키에게 질문하기..."):
     
     with st.chat_message(name="model", avatar="🤖"):
         st.markdown(response.text)
+
 
 
 
