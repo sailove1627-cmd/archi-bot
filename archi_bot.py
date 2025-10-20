@@ -42,7 +42,7 @@ try:
     # Streamlit의 Secrets에서 API 키를 안전하게 불러옵니다.
     genai.configure(api_key=os.environ["GEMINI_API_KEY"])
     model = genai.GenerativeModel(
-        "models/gemini-pro-latest",
+        "models/gemini-flash-latest",
         system_instruction=system_prompt
     )
 except Exception as e:
@@ -75,5 +75,6 @@ if prompt := st.chat_input("아키에게 질문하기..."):
     # Streamlit 최신 버전에 맞춰 assistant 대신 model을 사용합니다.
     with st.chat_message(name="model", avatar="🤖"):
         st.markdown(response.text)
+
 
 
