@@ -3,9 +3,6 @@ import google.generativeai as genai
 import os
 
 # ----------------- 초기 설정 -----------------
-# API 키 설정
-os.environ["GEMINI_API_KEY"] = "AIzaSyDlOVDHM576b71EbLO5_4L_pZ8UeAFSqRQ"
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
 
 # Streamlit 페이지 설정
 st.set_page_config(
@@ -31,11 +28,19 @@ system_prompt = """
 어려운 건설 용어는 반드시 중학생 눈높이에 맞춰 쉬운 비유를 들어 설명해줘.
 """
 
-# ----------------- 모델 초기화 -----------------
-model = genai.GenerativeModel(
-    "models/gemini-pro-latest",
-    system_instruction=system_prompt
-)
+# ----------------- 모델 초기화 (안전한 방식) -----------------
+try:
+    # Streamlit의 Secrets에서 API 키를 안전하게 불러옵니다.
+    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+    model = genai.GenerativeModel(
+        "models/gemini-pro-latest",
+        system_instruction=system_prompt
+    )
+except Exception as e:
+    # Secrets 설정이 안 되어 있을 경우, 친절한 오류 메시지를 보여줍니다.
+    st.error("Gemini API 키를 설정하는 데 문제가 발생했습니다. Streamlit Cloud의 Secrets 설정을 확인해주세요.")
+    st.stop()
+
 
 # ----------------- 세션 상태 관리 -----------------
 if "chat" not in st.session_state:
@@ -58,6 +63,6 @@ if prompt := st.chat_input("아키에게 질문하기..."):
 
     response = st.session_state.chat.send_message(prompt)
 
-    with st.chat_message(name="assistant", avatar="🤖"):
+    # Streamlit 최신 버전에 맞춰 assistant 대신 model을 사용합니다.
+    with st.chat_message(name="model", avatar="🤖"):
         st.markdown(response.text)
-
